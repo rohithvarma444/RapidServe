@@ -85,7 +85,7 @@ const uploadFile = async (fileName: string, localFilePath: string) => {
 
 export async function uploadBuildFiles(id: string){
     
-    const folderPath = path.join(__dirname,`output/${id}/dist`);
+    const folderPath = path.join(__dirname,`../output/${id}/dist`);
     const allFiles = getAllFiles(folderPath);
 
     await Promise.all(allFiles.map(async (file) => {
