@@ -17,15 +17,12 @@ export async function getFilesS3(prefix: string) {
     try {
         const allFiles = await s3.listObjectsV2({
             Bucket: 'my-vercelapp',
-            Prefix: prefix
+            Prefix: prefix,
         }).promise();
-        console.log("these are the total files: ",allFiles.Contents?.length);
-        
         if (!allFiles.Contents) {
             console.log("No files found with prefix:", prefix);
             return;
         }
-
         const allPromises = allFiles.Contents.map(async (object) => {
             return new Promise<void>(async (resolve) => {
                 if (!object.Key) {

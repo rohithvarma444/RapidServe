@@ -2,6 +2,7 @@ import aws from 'aws-sdk'
 import dotenv from "dotenv"
 import { uploadBuildFiles,getFilesS3 } from './utils'
 import { buildProject } from './builder'
+
 dotenv.config()
 
 const sqs = new aws.SQS({
@@ -24,13 +25,18 @@ const params : aws.SQS.ReceiveMessageRequest = {
 async function main(){
     while(1){
         const res = await sqs.receiveMessage(params).promise();
-        console.log(res);
-        const id = res?.Messages?.[0].Body
+        console.log("here's the response form sqs", res);
+        if(res.Messages?.length == 0){
+            console.log("Nothing found on the queue");
+            continue;            
+        }
+        const rawId = res.Messages?.[0].Body as string;
+        const id = JSON.parse(rawId) as string;
         if(id){
             try{
-                console.log("1");
+                console.log("this is the id we are looking for currently: ", id);
+                console.log("prefix: ", `output/${id}/`);
                 await getFilesS3(`output/${id}/`);
-                console.log("2");
                 await buildProject(id);
                 console.log("successfully installed all the file of deployement: ",id);
                 try{
