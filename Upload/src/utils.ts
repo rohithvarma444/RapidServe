@@ -15,7 +15,7 @@ console.log(process.env.AWS_SQS_ACCESS_KEY);
 console.log(process.env.AWS_SQS_SECRET_KEY);
 
 export function generate() {
-  const chars = "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM";
+  const chars = "1234567890qwertyuiopasdfghjklzxcvbnm";
   let id = "";
   for (let i = 0; i < MAX_LEN; i++) {
     id += chars[Math.floor(Math.random() * chars.length)];
