@@ -1,0 +1,28 @@
+{
+  "name": "vercel-clone",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohithvarma444/vercel-clone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rohithvarma444/vercel-clone/issues"
+  },
+  "homepage": "https://github.com/rohithvarma444/vercel-clone#readme",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "aws-sdk": "^2.1692.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "redis": "^5.8.1",
+    "simple-git": "^3.28.0"
+  }
+}
