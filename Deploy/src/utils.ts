@@ -11,6 +11,58 @@ const s3 = new S3({
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
+const dynamodb = new (require('aws-sdk')).DynamoDB.DocumentClient({
+        accessKeyId: process.env.AWS_DB_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_DB_SECRET_KEY,
+        region: process.env.AWS_REGION || "ap-south-1",
+});
+
+export async function updateDeploymentStatus(deploymentId: string, status: string, message: string, error?: string, url?: string) {
+  const updateExpression: string[] = ['SET #status = :status, #message = :message, #updatedAt = :updatedAt'];
+  const expressionAttributeNames: { [key: string]: string } = {
+    '#status': 'status',
+    '#message': 'message',
+    '#updatedAt': 'updatedAt'
+  };
+  const expressionAttributeValues: { [key: string]: any } = {
+    ':status': status,
+    ':message': message,
+    ':updatedAt': new Date().toISOString()
+  };
+
+  // Add error if provided
+  if (error) {
+    updateExpression.push('#error = :error');
+    expressionAttributeNames['#error'] = 'error';
+    expressionAttributeValues[':error'] = error;
+  }
+
+  // Add URL if provided
+  if (url) {
+    updateExpression.push('#url = :url');
+    expressionAttributeNames['#url'] = 'url';
+    expressionAttributeValues[':url'] = url;
+  }
+
+  const params = {
+    TableName: 'deployment-status',
+    Key: {
+      deploymentId: deploymentId
+    },
+    UpdateExpression: updateExpression.join(', '),
+    ExpressionAttributeNames: expressionAttributeNames,
+    ExpressionAttributeValues: expressionAttributeValues
+  };
+
+  try {
+    await dynamodb.update(params).promise();
+    console.log(`Updated deployment status for ${deploymentId}: ${status}`);
+  } catch (error) {
+    console.error('Error updating deployment status:', error);
+    throw error;
+  }
+}
+
 export async function getFilesS3(prefix: string) {
 
     const bucketName = process.env.AWS_S3_BUCKET || "";
@@ -89,12 +141,12 @@ export async function uploadBuildFiles(id: string){
     const allFiles = getAllFiles(folderPath);
 
     await Promise.all(allFiles.map(async (file) => {
-        await uploadFile(`dist/${id}/`+file.slice(folderPath.length+1),file);
+        const relativePath = file.slice(folderPath.length + 1);
+        await uploadFile(`dist/${id}/${relativePath}`, file);
     }))
     
     console.log("All files uploaded successfully!");
 }
-
 
 
 

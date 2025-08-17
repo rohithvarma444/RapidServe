@@ -1,6 +1,6 @@
 import aws from 'aws-sdk'
 import dotenv from "dotenv"
-import { uploadBuildFiles,getFilesS3 } from './utils'
+import { uploadBuildFiles, getFilesS3, updateDeploymentStatus } from './utils'
 import { buildProject } from './builder'
 
 dotenv.config()
@@ -36,9 +36,14 @@ async function main(){
             try{
                 console.log("this is the id we are looking for currently: ", id);
                 console.log("prefix: ", `output/${id}/`);
+                await updateDeploymentStatus(id, 'downloading', 'Downloading files from S3...');
                 await getFilesS3(`output/${id}/`);
+                
+                await updateDeploymentStatus(id, 'building', 'Building project...');
+                
                 await buildProject(id);
                 console.log("successfully installed all the file of deployement: ",id);
+                
                 try{
                     await sqs.deleteMessage({
                     QueueUrl: queueUrl as string,
@@ -47,19 +52,26 @@ async function main(){
                 console.log("successfully deleted the message from queue: ",id);
                 }catch(err){
                     console.log("error in deleting the message from queue: ",id);
+                    await updateDeploymentStatus(id, 'failed', 'Failed to delete SQS message', err instanceof Error ? err.message : 'Unknown error');
                 }
+                
+                await updateDeploymentStatus(id, 'uploading_build', 'Uploading build files...');
+                
                 try{
                     await uploadBuildFiles(id);
+                    await updateDeploymentStatus(id, 'completed', 'Deployment completed successfully!');
                 }catch(err){
                     console.log("error in uploading the files: ",id);
+                    await updateDeploymentStatus(id, 'failed', 'Failed to upload build files', err instanceof Error ? err.message : 'Unknown error');
                 }
+                
             }catch(err){
                 console.log("error in installing files: ",id);
+                await updateDeploymentStatus(id, 'failed', 'Failed to process deployment', err instanceof Error ? err.message : 'Unknown error');
             }
         }
     }
 }
-
 
 main();
 
