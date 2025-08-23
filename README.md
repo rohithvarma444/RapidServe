@@ -7,6 +7,9 @@ A modern deployment platform for instant GitHub repository deployment with real-
 ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=flat&logo=node.js&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-FF9900?style=flat&logo=amazon-aws&logoColor=white)
 
+## System Design
+![System Architecture](https://github.com/rohithvarma444/RapidServe/blob/main/System-Design.png)
+
 ## Features
 
 - Instant GitHub repository deployment
@@ -149,9 +152,7 @@ Get deployment status
 **GET /***
 Serve deployed applications at `{deployment-id}.localhost:3001/*`
 
-## System Design
 
-See the end-to-end architecture diagram here: [System-Design.png](./System-Design.png)git a
 
 The flow at a high level:
 - Frontend submits `repoUrl` to the Upload service and continuously polls `/status?id={deploymentId}`
