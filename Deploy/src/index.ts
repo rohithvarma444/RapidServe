@@ -1,9 +1,7 @@
 import aws from 'aws-sdk'
-import dotenv from "dotenv"
 import { uploadBuildFiles, getFilesS3, updateDeploymentStatus } from './utils'
 import { buildProject } from './builder'
 
-dotenv.config()
 
 const sqs = new aws.SQS({
     region: process.env.AWS_SQS_REGION,
@@ -34,8 +32,6 @@ async function main(){
         const id = JSON.parse(rawId) as string;
         if(id){
             try{
-                console.log("this is the id we are looking for currently: ", id);
-                console.log("prefix: ", `output/${id}/`);
                 await updateDeploymentStatus(id, 'downloading', 'Downloading files from S3...');
                 await getFilesS3(`output/${id}/`);
                 

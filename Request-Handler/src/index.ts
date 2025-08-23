@@ -1,8 +1,5 @@
 import express from "express";
 import { S3 } from "aws-sdk";
-import dotenv from "dotenv"
-
-dotenv.config();
 
 const s3 = new S3({
         region: 'ap-south-1',

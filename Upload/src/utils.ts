@@ -1,8 +1,6 @@
 import aws from "aws-sdk";
 import fs from "fs";
 import path from "path";
-import dotenv from 'dotenv'
-dotenv.config();
 
 const MAX_LEN = 5;
 

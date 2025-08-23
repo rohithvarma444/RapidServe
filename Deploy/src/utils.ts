@@ -1,9 +1,7 @@
 import { S3 } from "aws-sdk";
 import { createWriteStream, existsSync, mkdirSync } from "fs";
 import path, { dirname, join } from "path";
-import dotenv from "dotenv"
 import fs from "fs"
-dotenv.config();
 
 const s3 = new S3({
         region: process.env.AWS_REGION,
@@ -30,14 +28,12 @@ export async function updateDeploymentStatus(deploymentId: string, status: strin
     ':updatedAt': new Date().toISOString()
   };
 
-  // Add error if provided
   if (error) {
     updateExpression.push('#error = :error');
     expressionAttributeNames['#error'] = 'error';
     expressionAttributeValues[':error'] = error;
   }
 
-  // Add URL if provided
   if (url) {
     updateExpression.push('#url = :url');
     expressionAttributeNames['#url'] = 'url';
