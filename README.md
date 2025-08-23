@@ -149,6 +149,54 @@ Get deployment status
 **GET /***
 Serve deployed applications at `{deployment-id}.localhost:3001/*`
 
+## System Design
+
+See the end-to-end architecture diagram here: [System-Design.png](./System-Design.png)git a
+
+The flow at a high level:
+- Frontend submits `repoUrl` to the Upload service and continuously polls `/status?id={deploymentId}`
+- Upload service clones the repository, uploads source files to S3 under `output/{id}/`, publishes `{id}` to SQS, and writes status to DynamoDB
+- Deploy service consumes `{id}` from SQS, downloads source from S3, builds, uploads build artifacts to S3 under `dist/{id}/`, and updates DynamoDB with the final URL
+- Request Handler serves files by `{id}` from S3
+
+## Technologies and How They're Used
+
+- React + Vite (Frontend):
+  - Collects GitHub repository URL and triggers deployment via `POST /repoUrl`
+  - Polls `GET /status?id={deploymentId}` for real-time updates (started, cloning, uploading, queued, downloading, building, uploading_build, completed, failed)
+  - Displays the final deployed URL and any error messages
+
+- TypeScript:
+  - Strong typing across frontend and backend services for safer refactors and clearer contracts
+
+- Express (Upload Service):
+  - API endpoint `POST /repoUrl` to accept the repository URL
+  - Uses `simple-git` to clone the repo to `Upload/output/{id}`
+  - Recursively uploads files to S3 at keys `output/{id}/...`
+  - Publishes `{id}` to SQS for asynchronous build processing
+  - Persists deployment status and errors in DynamoDB
+
+- AWS S3:
+  - Stores raw source under `output/{id}/...`
+  - Stores built artifacts under `dist/{id}/...`
+  - Acts as the origin for the Request Handler when serving deployed files
+
+- AWS SQS:
+  - Decouples upload and build services
+  - The Upload service enqueues `{id}`; the Deploy service consumes and processes it
+
+- Deploy (Build) Service:
+  - Fetches source from S3 (`output/{id}/`), runs the build, uploads build output to `dist/{id}/`
+  - Updates DynamoDB with status transitions and the final public URL
+
+- DynamoDB:
+  - Single-table storage (`deployment-status`) keyed by `deploymentId`
+  - Tracks `status`, `message`, `error`, `url`, and timestamps used by the frontend to render progress
+
+- Request Handler:
+  - Serves static assets backed by S3
+  - Resolves requests using the `{deploymentId}` to locate content under `dist/{id}/`
+
 ## Project Structure
 
 ```
