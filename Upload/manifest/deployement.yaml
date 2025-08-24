@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rapidserve-upload
+spec:
+  selector:
+    matchLabels:
+      app: rapidserve-upload
+  template:
+    metadata:
+      labels:
+        app: rapidserve-upload
+    spec:
+      containers:
+      - name: rapidserve-upload
+        image: r0h17h/rapidserve-upload:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      
+        ports:
+        - containerPort: 3000
+        envFrom:
+          - secretRef:
+              name: upload-secret
+          - configMapRef:
+              name: upload-configmap

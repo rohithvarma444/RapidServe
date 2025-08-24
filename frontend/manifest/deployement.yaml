@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rapidserve-frontend
+spec:
+  selector:
+    matchLabels:
+      app: rapidserve-frontend
+  template:
+    metadata:
+      labels:
+        app: rapidserve-frontend
+    spec:
+      containers:
+      - name: rapidserve-frontend
+        image: r0h17h/rapidserve-frontend:latest
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+

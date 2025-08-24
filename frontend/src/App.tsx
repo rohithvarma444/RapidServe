@@ -14,6 +14,7 @@ function App() {
   const [isDeploying, setIsDeploying] = useState(false)
   const [deploymentStatus, setDeploymentStatus] = useState<DeploymentStatus | null>(null)
   const [backendUrl, setBackendUrl] = useState('')
+  // @ts-ignore
   const [deploymentId, setDeploymentId] = useState('')
   const [statusPoller, setStatusPoller] = useState<StatusPoller | null>(null)
 
@@ -338,6 +339,34 @@ function App() {
             }}>
               📊 Deployment Status
             </h3>
+            {deploymentId && (
+              <div style={{
+                marginBottom: '15px',
+                padding: '10px',
+                backgroundColor: '#f3f4f6',
+                borderRadius: '8px',
+                border: '1px solid #d1d5db'
+              }}>
+                <span style={{ 
+                  fontSize: '0.9rem',
+                  color: '#6b7280',
+                  fontWeight: '500'
+                }}>
+                  🆔 Deployment ID: 
+                </span>
+                <code style={{
+                  backgroundColor: '#ffffff',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.85rem',
+                  color: '#374151',
+                  border: '1px solid #d1d5db'
+                }}>
+                  {deploymentId}
+                </code>
+              </div>
+            )}
             <div style={{
               display: 'flex',
               alignItems: 'center',
