@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
-    environement {
+    environment {
         DOCKER_USERNAME = "rohithvarma"
     }
 
-    stages{
-        stage('testing'){
-            steps{
+    stages {
+        stage('testing') {
+            steps {
                 sh 'echo "hello world"'
             }
         }
