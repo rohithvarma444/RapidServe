@@ -1,0 +1,15 @@
+pipeline {
+    agent any
+
+    environement {
+        DOCKER_USERNAME = "rohithvarma"
+    }
+
+    stages{
+        stage('testing'){
+            step{
+                sh 'echo "hello world"'
+            }
+        }
+    }
+}
