@@ -8,7 +8,12 @@ pipeline {
     stages {
         stage('Docker Login'){
             steps{
-                sh 'echo "login"'
+                sh 'echo "Login to Docker Hub"'
+                sh '''
+                    echo "Docker Credentials:"
+                    echo "Username: ${DOCKER_CREDENTIALS_USR}"
+                    echo "Password: ${DOCKER_CREDENTIALS_PSW}"
+                '''
             }
         }
     }
