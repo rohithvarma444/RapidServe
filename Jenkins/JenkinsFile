@@ -2,13 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USERNAME = "rohithvarma"
+        DOCKER_CREDENTIALS = credentials('rohithvarma- Dockerhub')
     }
 
     stages {
-        stage('testing') {
-            steps {
-                sh 'echo "hello world"'
+        stage('Docker Login'){
+            steps{
+                sh 'echo "login"'
             }
         }
     }
