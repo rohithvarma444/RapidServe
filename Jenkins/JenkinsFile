@@ -8,7 +8,16 @@ pipeline {
     stages {
         stage('Docker Login'){
             steps{
-                sh 'docker login -u $DOCKER_CREDENTIALS_USR -p $DOCKER_CREDENTIALS_PSD'
+                script {
+                    // Check if Docker is installed
+                    def dockerCheck = sh(script: 'which docker || echo "NOT_FOUND"', returnStdout: true).trim()
+                    if (dockerCheck == "NOT_FOUND") {
+                        error("Docker is not installed on this Jenkins agent. Please install Docker or use a Docker-enabled agent.")
+                    }
+                    
+                    // Login to Docker Hub
+                    sh 'docker login -u $DOCKER_CREDENTIALS_USR -p $DOCKER_CREDENTIALS_PSW'
+                }
             }
             post{
                 success{
