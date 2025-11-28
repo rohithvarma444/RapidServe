@@ -8,16 +8,7 @@ pipeline {
     stages {
         stage('Docker Login'){
             steps{
-                script {
-                    // Check if Docker is installed
-                    def dockerCheck = sh(script: 'which docker || echo "NOT_FOUND"', returnStdout: true).trim()
-                    if (dockerCheck == "NOT_FOUND") {
-                        error("Docker is not installed on this Jenkins agent. Please install Docker or use a Docker-enabled agent.")
-                    }
-                    
-                    // Login to Docker Hub
-                    sh 'docker login -u $DOCKER_CREDENTIALS_USR -p $DOCKER_CREDENTIALS_PSW'
-                }
+                sh 'docker login -u $DOCKER_CREDENTIALS_USR -p $DOCKER_CREDENTIALS_PSD'
             }
             post{
                 success{
@@ -25,6 +16,31 @@ pipeline {
                 }
                 failure{
                     sh 'echo "Login to Docker Hub failed"'
+                }
+            }
+        }
+
+        stage('Build and Push Docker Images'){
+            steps{
+                step{
+                    sh 'cd frontend && docker build -t rohithvarma444/frontend:latest .'
+                }
+                step{
+                    sh 'cd upload && docker build -t rohithvarma444/upload:latest .'
+                }
+                step{
+                    sh 'cd deploy && docker build -t rohithvarma444/deploy:latest .'
+                }
+                step{
+                    sh 'cd request-handler && docker build -t rohithvarma444/request-handler:latest .'
+                }
+            }
+            post{
+                success{
+                    sh 'echo "Docker images built and pushed successfully"'
+                }
+                failure{
+                    sh 'echo "Docker images build and push failed"'
                 }
             }
         }
