@@ -8,15 +8,10 @@ pipeline {
     stages {
         stage('Docker Login'){
             steps{
-                sh 'docker login -u $DOCKER_CREDENTIALS_USR -p $DOCKER_CREDENTIALS_PSD'
+                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
             }
-            post{
-                success{
-                    sh 'echo "Login to Docker Hub successful"'
-                }
-                failure{
-                    sh 'echo "Login to Docker Hub failed"'
-                }
+            error{
+                sh 'echo "Login to Docker Hub failed"'
             }
         }
 
