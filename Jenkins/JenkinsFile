@@ -10,9 +10,6 @@ pipeline {
             steps{
                 sh 'echo $DOCKER_CREDENTIALS_PSW | docker login -u $DOCKER_CREDENTIALS_USR --password-stdin'
             }
-            error{
-                sh 'echo "Login to Docker Hub failed"'
-            }
         }
 
         stage('Build and Push Docker Images'){
