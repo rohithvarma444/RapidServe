@@ -22,18 +22,10 @@ pipeline {
 
         stage('Build and Push Docker Images'){
             steps{
-                step{
-                    sh 'cd frontend && docker build -t rohithvarma444/frontend:latest .'
-                }
-                step{
-                    sh 'cd upload && docker build -t rohithvarma444/upload:latest .'
-                }
-                step{
-                    sh 'cd deploy && docker build -t rohithvarma444/deploy:latest .'
-                }
-                step{
-                    sh 'cd request-handler && docker build -t rohithvarma444/request-handler:latest .'
-                }
+                sh 'cd frontend && docker build -t rohithvarma444/frontend:latest . && docker push rohithvarma444/frontend:latest'
+                sh 'cd Upload && docker build -t rohithvarma444/upload:latest . && docker push rohithvarma444/upload:latest'
+                sh 'cd Deploy && docker build -t rohithvarma444/deploy:latest . && docker push rohithvarma444/deploy:latest'
+                sh 'cd Request-Handler && docker build -t rohithvarma444/request-handler:latest . && docker push rohithvarma444/request-handler:latest'
             }
             post{
                 success{
